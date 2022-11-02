@@ -1,5 +1,9 @@
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { changePostsView } from "../../../features/blog/blogSlice";
+import {
+  changePostsView,
+  clearStatus,
+  selectEditedPost,
+} from "../../../features/blog/blogSlice";
 
 export default function BlogContentActions() {
   const selectPostsView = useSelector(
@@ -10,6 +14,11 @@ export default function BlogContentActions() {
   const dispatch = useDispatch();
   const handleTabClick = () => {
     dispatch(changePostsView());
+  };
+
+  const selectBeingEdited = useSelector(selectEditedPost);
+  const handleLeaveEditMode = () => {
+    dispatch(clearStatus());
   };
 
   return (
@@ -34,6 +43,17 @@ export default function BlogContentActions() {
           Single Post
         </span>
       </li>
+      {selectBeingEdited.type === "edited" && (
+        <li className="nav-item" onClick={handleLeaveEditMode}>
+          <span
+            className={`nav-link ${
+              selectPostsView === "single-post" ? " active" : ""
+            }`}
+          >
+            Leave edit mode
+          </span>
+        </li>
+      )}
     </ul>
   );
 }

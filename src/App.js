@@ -2,13 +2,11 @@ import React from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Blog from "./components/Blog/Blog";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector } from "react-redux";
+import { selectPostsCounts } from "./features/blog/blogSlice";
 
 function App() {
-  const selectNumberOfPosts = useSelector(
-    (state) => state.blog.numberOfPosts,
-    shallowEqual
-  );
+  const selectNumberOfPosts = useSelector(selectPostsCounts);
 
   return (
     <div className="App">

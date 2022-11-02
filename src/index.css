@@ -22,3 +22,9 @@ code {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.being-edited {
+  cursor: not-allowed !important;
+  background-color: rgb(216, 41, 41) !important;
+  color: #fff !important;
+}

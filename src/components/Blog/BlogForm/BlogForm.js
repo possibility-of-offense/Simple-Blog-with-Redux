@@ -1,7 +1,12 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
-import { addBlog } from "../../../features/blog/blogSlice";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  actualEditPost,
+  addBlog,
+  selectBlogById,
+  selectEditedPost,
+} from "../../../features/blog/blogSlice";
 import resetInputVals from "../../../helpers/reset-input-values";
 import moment from "moment";
 
@@ -16,6 +21,33 @@ export default function BlogForm({ columns }) {
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci perspiciatis ad odio, recusandae cum, laborum animi molestiae minus totam neque quod tempora velit ipsum ipsam fugit quae necessitatibus sed? Dolorem iusto odit reprehenderit minus totam. Error dignissimos sint magnam tempore quas. Asperiores, autem. Necessitatibus enim minima id quis eos harum quaerat assumenda repudiandae aperiam repellat nulla illo quae ad, odio eligendi temporibus et quo laudantium atque veniam cupiditate! A provident, consequatur laudantium harum at non iste assumenda aliquam beatae optio asperiores doloribus? Accusantium excepturi eos aut earum, necessitatibus facere nemo natus quo placeat quisquam alias porro a fugiat quam ratione."
   );
 
+  const [blogId, setBlogId] = useState(null);
+
+  // check for post being in edit mode
+  const selectBeingEdit = useSelector(selectEditedPost);
+  const selectBlog = useSelector((state) => selectBlogById(state, blogId));
+
+  // if is in edit mode, update the blog id; when the blog id is updated, the component
+  // is being re-rendered so the selectBlog selector will catch the right blog
+  // When re-render updated the input fields
+
+  useEffect(() => {
+    if (selectBeingEdit.type === "edited") {
+      setBlogId(selectBeingEdit.id);
+      if (selectBlog) {
+        setAuthor(selectBlog.author);
+        setTitle(selectBlog.title);
+        setContent(selectBlog.content);
+      }
+    } else if (selectBeingEdit.type === "left-editing") {
+      resetInputVals(
+        { value: setAuthor, type: "" },
+        { value: setTitle, type: "" },
+        { value: setContent, type: "" }
+      );
+    }
+  }, [selectBeingEdit.type, selectBlog]);
+
   const dispatch = useDispatch();
 
   const handleAddBlog = useCallback(
@@ -28,9 +60,25 @@ export default function BlogForm({ columns }) {
         title,
         content,
         date: moment().format("MMMM Do YYYY, h:mm:ss a"),
+        likes: 0,
       };
 
-      dispatch(addBlog(blog));
+      // Dispatch only if not in edited mode
+      if (selectBeingEdit?.type !== "edited") {
+        dispatch(addBlog(blog));
+      } else {
+        // Actual update on the post
+        dispatch(
+          actualEditPost(selectBeingEdit.id, {
+            id: selectBeingEdit.id,
+            author,
+            title,
+            content,
+            date: moment().format("MMMM Do YYYY, h:mm:ss a"),
+            likes: selectBlog.likes,
+          })
+        );
+      }
 
       resetInputVals(
         { value: setAuthor, type: "" },
@@ -84,7 +132,9 @@ export default function BlogForm({ columns }) {
             />
           </div>
           <div className="text-end">
-            <Button classes="btn btn-primary">Add post</Button>
+            <Button classes="btn btn-primary">
+              {selectBeingEdit.type !== "edited" ? "Add post" : "Edit post"}
+            </Button>
           </div>
         </form>
       </Panel>

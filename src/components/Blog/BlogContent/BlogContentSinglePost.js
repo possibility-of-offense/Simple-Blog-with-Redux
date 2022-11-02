@@ -5,6 +5,7 @@ export default function BlogContentSinglePost({ blog }) {
       <p>{blog.content}</p>
       <hr />
       <p className="mb-0">{blog.date}</p>
+      Likes: {blog.likes}
     </div>
   );
 }

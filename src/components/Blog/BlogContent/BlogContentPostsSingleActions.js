@@ -1,14 +1,17 @@
 import { Fragment } from "react";
 import { FaHeart, FaEdit } from "react-icons/fa";
 
-export default function BlogContentPostsSingleActions() {
+export default function BlogContentPostsSingleActions({
+  incrementing,
+  editing,
+}) {
   return (
     <Fragment>
       <a href="#!" className="link-muted mx-1">
-        <FaEdit size={12} />
+        <FaEdit onClick={editing} title="edit" size={12} />
       </a>
       <a href="#!" className="link-muted mx-1">
-        <FaHeart size={12} />
+        <FaHeart onClick={incrementing} title="like" size={12} />
       </a>
     </Fragment>
   );

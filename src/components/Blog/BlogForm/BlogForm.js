@@ -1,5 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actualEditPost,
@@ -13,6 +13,25 @@ import moment from "moment";
 import Button from "../../UI/Button";
 import Input from "../../UI/Input";
 import Panel from "../../UI/Panel";
+import Alert from "../../UI/Alert";
+
+const postAddedReducer = (state, action) => {
+  switch (action.type) {
+    case "SHOW_ALERT":
+      return {
+        alertContent: action.payload,
+        showAlert: true,
+      };
+
+    case "HIDE_ALERT":
+      return {
+        alertContent: "",
+        showAlert: false,
+      };
+    default:
+      return state;
+  }
+};
 
 export default function BlogForm({ columns }) {
   const [author, setAuthor] = useState("Ventsislav Iliev");
@@ -30,6 +49,11 @@ export default function BlogForm({ columns }) {
   // if is in edit mode, update the blog id; when the blog id is updated, the component
   // is being re-rendered so the selectBlog selector will catch the right blog
   // When re-render updated the input fields
+
+  const [postAddedState, postAddedDispatcher] = useReducer(postAddedReducer, {
+    showAlert: false,
+    alertContent: "",
+  });
 
   useEffect(() => {
     if (selectBeingEdit.type === "edited") {
@@ -85,14 +109,21 @@ export default function BlogForm({ columns }) {
         { value: setTitle, type: "" },
         { value: setContent, type: "" }
       );
-      // TODO add alert
-      console.log("POST ADDED");
+
+      postAddedDispatcher({ type: "SHOW_ALERT", payload: "Post Added" });
     },
     [author, title, content]
   );
 
+  const handleHideAlert = () => {
+    postAddedDispatcher({ type: "HIDE_ALERT" });
+  };
+
   return (
     <div className={columns}>
+      {postAddedState.showAlert && (
+        <Alert onClick={handleHideAlert}>{postAddedState.alertContent}</Alert>
+      )}
       <Panel>
         <form onSubmit={handleAddBlog}>
           <div className="mb-3">

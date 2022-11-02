@@ -1,0 +1,18 @@
+.alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  transform: translateY(-100%);
+  animation: showAlert 0.3s ease-in-out forwards;
+}
+
+@keyframes showAlert {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: none;
+  }
+}

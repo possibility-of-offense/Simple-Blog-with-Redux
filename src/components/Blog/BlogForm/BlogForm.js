@@ -1,5 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actualEditPost,
@@ -42,6 +42,8 @@ export default function BlogForm({ columns }) {
 
   const [blogId, setBlogId] = useState(null);
 
+  const firstInputRef = useRef(null);
+
   // check for post being in edit mode
   const selectBeingEdit = useSelector(selectEditedPost);
   const selectBlog = useSelector((state) => selectBlogById(state, blogId));
@@ -69,8 +71,9 @@ export default function BlogForm({ columns }) {
         { value: setTitle, type: "" },
         { value: setContent, type: "" }
       );
+      firstInputRef.current.focus();
     }
-  }, [selectBeingEdit.type, selectBlog]);
+  }, [selectBeingEdit.type, selectBeingEdit.id, selectBlog]);
 
   const dispatch = useDispatch();
 
@@ -109,10 +112,11 @@ export default function BlogForm({ columns }) {
         { value: setTitle, type: "" },
         { value: setContent, type: "" }
       );
+      firstInputRef.current.focus();
 
       postAddedDispatcher({ type: "SHOW_ALERT", payload: "Post Added" });
     },
-    [author, title, content]
+    [author, title, content, dispatch, selectBeingEdit.id, selectBeingEdit.type]
   );
 
   const handleHideAlert = () => {
@@ -122,13 +126,16 @@ export default function BlogForm({ columns }) {
   return (
     <div className={columns}>
       {postAddedState.showAlert && (
-        <Alert onClick={handleHideAlert}>{postAddedState.alertContent}</Alert>
+        <Alert onHideAlert={handleHideAlert}>
+          {postAddedState.alertContent}
+        </Alert>
       )}
       <Panel>
         <form onSubmit={handleAddBlog}>
           <div className="mb-3">
             {/* TODO add props forwarding */}
             <Input
+              ref={firstInputRef}
               id="blogAuthor"
               labelClasses="form-label label-text text-primary"
               labelContent="Author"

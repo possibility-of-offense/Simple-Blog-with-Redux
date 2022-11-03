@@ -4,7 +4,7 @@ import { selectBlogById as memoizeSelectById } from "../../../features/blog/blog
 import Panel from "../../UI/Panel";
 import BlogContentActions from "./BlogContentActions";
 import BlogContentPosts from "./BlogContentPosts";
-import BlogContentSinglePost from "./BlogContentSinglePost";
+import SingleBlogPostContent from "./SingleBlogPostContent";
 
 export default function BlogContent({ columns }) {
   const selectPostsView = useSelector((state) => state.blog.postsView);
@@ -33,7 +33,7 @@ export default function BlogContent({ columns }) {
             onSetBlogId={setBlogId}
           />
         )}
-        {!showList && <BlogContentSinglePost blog={selectBlogById} />}
+        {!showList && <SingleBlogPostContent blog={selectBlogById} />}
       </Panel>
     </div>
   );

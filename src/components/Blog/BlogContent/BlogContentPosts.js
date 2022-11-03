@@ -67,7 +67,7 @@ export default function BlogContentPosts({ onToggleShowList, onSetBlogId }) {
               <div className="row">
                 <p className="col-8 m-0">
                   <span
-                    className="text-decoration-underline"
+                    className="text-decoration-underline cursor-pointer"
                     onClick={() => handleBlogPostClick(blog.id)}
                   >
                     {blog.title}
@@ -75,7 +75,9 @@ export default function BlogContentPosts({ onToggleShowList, onSetBlogId }) {
                   &nbsp;
                   <span>
                     <BlogContentPostsSingleActions
-                      incrementing={() => handleIncrementLikes(blog.id)}
+                      incrementing={() =>
+                        handleIncrementLikes(blog.id, blog.author)
+                      }
                       editing={() => handleEditedPost(blog.id, blog)}
                     />
                   </span>

@@ -44,7 +44,7 @@ export default function BlogContentActions() {
         </span>
       </li>
       {selectBeingEdited.type === "edited" && (
-        <li className="nav-item" onClick={handleLeaveEditMode}>
+        <li className="nav-item cursor-pointer" onClick={handleLeaveEditMode}>
           <span
             className={`nav-link ${
               selectPostsView === "single-post" ? " active" : ""

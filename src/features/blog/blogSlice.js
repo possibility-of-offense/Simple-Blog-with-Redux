@@ -7,6 +7,11 @@ const initialState = {
     type: "idle",
     editedPost: {},
   },
+  lastPersonsAddedBlog: {
+    name: "",
+    onLiked: false,
+    likedBlogs: [],
+  },
 };
 
 const blogSlice = createSlice({
@@ -16,21 +21,40 @@ const blogSlice = createSlice({
     addBlog(state, action) {
       state.posts[action.payload.id] = action.payload;
       state.postsView = "all-posts";
+
+      state.lastPersonsAddedBlog = {
+        name: action.payload.author,
+        onLiked: false,
+        likedBlogs: [],
+      };
     },
     changePostsView(state) {
       state.postsView =
         state.postsView === "all-posts" ? "single-post" : "all-posts";
     },
-    incrementLike(state, action) {
-      const id = action.payload;
+    incrementLike: {
+      prepare(id) {
+        return { payload: { id } };
+      },
+      reducer(state, action) {
+        const { id } = action.payload;
 
-      if (state.posts.hasOwnProperty(id)) {
-        state.posts[id] = {
-          ...state.posts[id],
-          likes: state.posts[id].likes + 1,
-        };
-      }
+        // When the blog is being added updated the lastPersonAddedBlog
+        // When the increment icon is being clicked, check for the lastPersonAddedBlog.likedBlogs list
+        // if the id is not present in there, update the likes of the blog
+        if (state.posts.hasOwnProperty(id)) {
+          if (!state.lastPersonsAddedBlog.likedBlogs.includes(id)) {
+            state.posts[id] = {
+              ...state.posts[id],
+              likes: state.posts[id].likes + 1,
+            };
+            state.lastPersonsAddedBlog.onLiked = true;
+            state.lastPersonsAddedBlog.likedBlogs.push(id);
+          }
+        }
+      },
     },
+
     prepareEditPost: {
       prepare(id, post) {
         return {

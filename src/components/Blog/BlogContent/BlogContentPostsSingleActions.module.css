@@ -1,0 +1,15 @@
+.icon {
+  animation: notifyIcon 0.8s ease-in-out forwards;
+}
+
+@keyframes notifyIcon {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

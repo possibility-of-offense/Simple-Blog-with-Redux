@@ -1,9 +1,9 @@
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { prepareEditPost } from "../../../features/blog/blogSlice";
-import SingleBlogPostDateLikes from "./SingleBlogPostDateLikes";
+import { prepareEditPost } from "../../../../features/blog/blogSlice";
+import SingleBlogViewDates_Likes from "./SingleBlogViewDates_Likes";
 
-export default function BlogContentSinglePost({ blog, editing }) {
+export default function SingleBlogViewContent({ blog }) {
   const dispatch = useDispatch();
   const handleEditing = () => {
     dispatch(
@@ -30,7 +30,9 @@ export default function BlogContentSinglePost({ blog, editing }) {
       <p className="label-text">By {blog.author}</p>
       <p>{blog.content}</p>
       <hr />
-      <SingleBlogPostDateLikes info={{ date: blog.date, likes: blog.likes }} />
+      <SingleBlogViewDates_Likes
+        info={{ date: blog.date, likes: blog.likes }}
+      />
     </div>
   );
 }

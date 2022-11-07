@@ -2,9 +2,9 @@ import { Fragment, useState } from "react";
 import { FaHeart, FaEdit } from "react-icons/fa";
 import IncrementerTooltip from "../../UI/IncrementerTooltip";
 
-import classes from "./BlogContentPostsSingleActions.module.css";
+import classes from "./BlogViewPostsListItemActions.module.css";
 
-export default function BlogContentPostsSingleActions({
+export default function BlogViewPostsListItemActions({
   incrementing,
   editing,
 }) {

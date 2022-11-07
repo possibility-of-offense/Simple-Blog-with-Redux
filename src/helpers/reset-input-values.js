@@ -1,5 +1,7 @@
 export default function resetInputVals(...inputs) {
   for (let inp of inputs) {
-    inp.value(inp.type);
+    if (inp.reducer === "post-added") {
+      inp.value({ type: inp.type, payload: "" });
+    }
   }
 }

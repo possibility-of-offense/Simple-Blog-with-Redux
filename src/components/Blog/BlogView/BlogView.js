@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectBlogById as memoizeSelectById } from "../../../features/blog/blogSlice";
-import Panel from "../../UI/Panel";
-import BlogContentActions from "./BlogContentActions";
-import BlogContentPosts from "./BlogContentPosts";
-import SingleBlogPostContent from "./SingleBlogPostContent";
+import { selectPostById as memoizeSelectById } from "../../../features/blog/blogSlice";
 
-export default function BlogContent({ columns }) {
+import Panel from "../../UI/Panel";
+import BlogViewTabActions from "./BlogViewTabActions";
+import BlogViewPosts from "./BlogViewPosts";
+import SingleBlogViewContent from "./SingleBlogView/SingleBlogViewContent";
+
+export default function BlogView({ columns }) {
+  // Get the posts view
   const selectPostsView = useSelector((state) => state.blog.postsView);
+
+  // Use state to trigger different components based on the posts view
   const [showList, setShowList] = useState(true);
 
   useEffect(() => {
     if (selectPostsView === "all-posts") {
-      setShowList(true);
+      if (!showList) {
+        setShowList(true);
+      }
     } else {
       setShowList(false);
     }
@@ -26,14 +32,15 @@ export default function BlogContent({ columns }) {
   return (
     <div className={columns}>
       <Panel>
-        <BlogContentActions />
+        <BlogViewTabActions />
+
         {showList && (
-          <BlogContentPosts
+          <BlogViewPosts
             onToggleShowList={setShowList}
             onSetBlogId={setBlogId}
           />
         )}
-        {!showList && <SingleBlogPostContent blog={selectBlogById} />}
+        {!showList && <SingleBlogViewContent blog={selectBlogById} />}
       </Panel>
     </div>
   );

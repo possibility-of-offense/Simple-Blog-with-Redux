@@ -1,6 +1,6 @@
-import classes from "./SingleBlogPostDateLikes.module.css";
+import classes from "./SingleBlogViewDates_Likes.module.css";
 
-export default function SingleBlogPostDateLikes({ info }) {
+export default function SingleBlogViewDates_Likes({ info }) {
   return (
     <div className={classes.wrapper}>
       <p>

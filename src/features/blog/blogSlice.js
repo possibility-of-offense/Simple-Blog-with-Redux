@@ -12,6 +12,7 @@ const initialState = {
     onLiked: false,
     likedBlogs: [],
   },
+  post_ids: [],
 };
 
 const blogSlice = createSlice({
@@ -21,6 +22,7 @@ const blogSlice = createSlice({
     addBlog(state, action) {
       state.posts[action.payload.id] = action.payload;
       state.postsView = "all-posts";
+      state.post_ids.push(action.payload.id);
 
       state.lastPersonsAddedBlog = {
         name: action.payload.author,
@@ -93,11 +95,7 @@ const blogSlice = createSlice({
   },
 });
 
-export const selectBlogs = createSelector(
-  (state) => state.blog.posts,
-  (posts) => Object.values(posts)
-);
-export const selectBlogById = createSelector(
+export const selectPostById = createSelector(
   (state) => state.blog.posts,
   (state, id) => id,
   (posts, id) => {

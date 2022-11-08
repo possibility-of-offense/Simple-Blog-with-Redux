@@ -30,10 +30,18 @@ const blogSlice = createSlice({
         likedBlogs: [],
       };
     },
-    changePostsView(state) {
-      state.postsView =
-        state.postsView === "all-posts" ? "single-post" : "all-posts";
+    changePostsView: {
+      prepare(view) {
+        return { payload: view };
+      },
+      reducer(state, action) {
+        state.postsView = action.payload;
+      },
     },
+    // changePostsView() {
+    //   state.postsView =
+    //   state.postsView === "all-posts" ? "single-post" : "all-posts";
+    // },
     incrementLike: {
       prepare(id) {
         return { payload: { id } };
@@ -86,7 +94,10 @@ const blogSlice = createSlice({
         const { id, info } = action.payload;
 
         if (state.posts.hasOwnProperty(id)) {
-          state.posts[id] = info;
+          state.posts[id] = {
+            ...info,
+            tags: state.posts[id].tags.concat(info.tags),
+          };
           state.status.type = "idle";
           state.status.editedPost = {};
         }

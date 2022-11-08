@@ -17,7 +17,6 @@ const postAddedReducer = (state, action) => {
         content: action.payload,
       };
     case "SET_TAGS":
-      // TODO add tags array
       return {
         ...state,
         tags: action.payload,

@@ -1,7 +1,8 @@
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { prepareEditPost } from "../../../../features/blog/blogSlice";
-import SingleBlogViewDates_Likes from "./SingleBlogViewDates_Likes";
+import TagsGroup from "../../../Tags/TagsGroup";
+import SingleBlogViewDatesLikes from "./SingleBlogViewDates_Likes";
 
 export default function SingleBlogViewContent({ blog }) {
   const dispatch = useDispatch();
@@ -27,12 +28,15 @@ export default function SingleBlogViewContent({ blog }) {
           size={12}
         />
       </h4>
-      <p className="label-text">By {blog.author}</p>
+      <div className="row">
+        <p className="label-text col-8">By {blog.author}</p>
+        <div className="col-4">
+          <TagsGroup tags={blog.tags} greenify={true} />
+        </div>
+      </div>
       <p>{blog.content}</p>
       <hr />
-      <SingleBlogViewDates_Likes
-        info={{ date: blog.date, likes: blog.likes }}
-      />
+      <SingleBlogViewDatesLikes info={{ date: blog.date, likes: blog.likes }} />
     </div>
   );
 }

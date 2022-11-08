@@ -13,13 +13,19 @@ export default function BlogContentActions() {
 
   const dispatch = useDispatch();
   const handleTabClick = () => {
-    dispatch(changePostsView());
+    dispatch(changePostsView("all-posts"));
   };
 
   const selectBeingEdited = useSelector(selectEditedPost);
   const handleLeaveEditMode = () => {
     dispatch(clearStatus());
   };
+
+  // remove tag filter
+  function handleRemoveTaggedFilter(e) {
+    e.stopPropagation();
+    dispatch(changePostsView("all-posts"));
+  }
 
   return (
     <ul className="nav nav-tabs">
@@ -30,7 +36,10 @@ export default function BlogContentActions() {
             selectPostsView === "all-posts" ? " active" : ""
           }`}
         >
-          All Posts
+          Posts{" "}
+          {selectPostsView === "tags" && (
+            <span onClick={handleRemoveTaggedFilter}>&times;</span>
+          )}
         </span>
       </li>
 

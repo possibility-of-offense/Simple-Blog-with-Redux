@@ -11,23 +11,24 @@ import {
   selectPostById,
   selectEditedPost,
 } from "../../../features/blog/blogSlice";
+import { addTags, selector, mergeTags } from "../../../features/tags/tagsSlice";
 
 import Button from "../../UI/Button";
 import Input from "../../UI/Input";
 import Panel from "../../UI/Panel";
 import Alert from "../../UI/Alert";
 import postAddedReducer from "../../../reducers/post-added";
-import { addTag } from "../../../features/tags/tagsSlice";
+import MultiSelectInput from "../../UI/MultiSelectInput";
+import TagsGroup from "../../Tags/TagsGroup";
+import { store } from "../../../app/store";
 
 const initialState = {
   alertContent: "",
   showAlert: false,
-  author: "Ventsislav Iliev",
-  title: "How to create content in React!",
-  content:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci perspiciatis ad odio, recusandae cum, laborum animi molestiae minus totam neque quod tempora velit ipsum ipsam fugit quae necessitatibus sed? Dolorem iusto odit reprehenderit minus totam. Error dignissimos sint magnam tempore quas. Asperiores, autem. Necessitatibus enim minima id quis eos harum quaerat assumenda repudiandae aperiam repellat nulla illo quae ad, odio eligendi temporibus et quo laudantium atque veniam cupiditate! A provident, consequatur laudantium harum at non iste assumenda aliquam beatae optio asperiores doloribus? Accusantium excepturi eos aut earum, necessitatibus facere nemo natus quo placeat quisquam alias porro a fugiat quam ratione.",
-  // TODO add tags array
-  tags: "react",
+  author: "",
+  title: "",
+  content: "",
+  tags: [],
 };
 
 export default function BlogForm({ columns }) {
@@ -36,6 +37,7 @@ export default function BlogForm({ columns }) {
     initialState
   );
 
+  // Set blog id
   const [blogId, setBlogId] = useState(null);
 
   // Ref for the first input
@@ -81,7 +83,7 @@ export default function BlogForm({ columns }) {
           type: "",
         },
         {
-          value: postAddedDispatcher({ type: "SET_TAGS", payload: "" }),
+          value: postAddedDispatcher({ type: "SET_TAGS", payload: [] }),
           type: "",
         }
       );
@@ -89,7 +91,16 @@ export default function BlogForm({ columns }) {
     }
   }, [selectBeingEdit.type, selectBeingEdit.id, selectBlog]);
 
+  // useEffect for checking updates on the inputs and then clear the tags
+
+  useEffect(() => {
+    setToClearTags(false);
+  }, [postAddedState]);
+
   // Adding blog post
+
+  const [toClearTags, setToClearTags] = useState(false);
+  const [cachedTagsContent, setCachedTagsContent] = useState("");
   const handleAddBlog = useCallback(
     (e) => {
       e.preventDefault();
@@ -105,28 +116,104 @@ export default function BlogForm({ columns }) {
       };
 
       // Dispatch only if not in edited mode
+      const splitCachedTags = cachedTagsContent.split(/,\s*/);
+      let tags;
+      let areEqual = true;
+
+      for (let i = 0; i < splitCachedTags.length; i++) {
+        if (splitCachedTags[i] === postAddedState.tags[i]) {
+          continue;
+        } else {
+          areEqual = false;
+          break;
+        }
+      }
+
+      if (!areEqual) {
+        tags = splitCachedTags;
+      } else {
+        tags = postAddedState.tags;
+      }
+
       if (selectBeingEdit?.type !== "edited") {
-        const tagId = nanoid();
-        dispatch(
-          addTag({ id: tagId, tag: postAddedState.tags, blog: blog.id })
-        );
+        const entities = selector.selectEntities(store.getState().tags);
+        let mergedEntities = {};
+
+        // LOGIC for merging the blog ids for the tag
+        if (Object.keys(entities).length > 0) {
+          mergedEntities = { ...entities };
+          for (let tag of tags) {
+            if (mergedEntities.hasOwnProperty(tag)) {
+              mergedEntities[tag] = {
+                ...mergedEntities[tag],
+                blog: mergedEntities[tag].blog.concat(blog.id),
+              };
+            } else {
+              mergedEntities[tag] = {
+                tag,
+                blog: [blog.id],
+              };
+            }
+          }
+        } else {
+          for (let tag of tags) {
+            mergedEntities[tag] = {
+              tag,
+              blog: [blog.id],
+            };
+          }
+        }
+
+        dispatch(addTags(mergedEntities));
+
+        blog.tags = tags;
 
         dispatch(addBlog(blog));
       } else {
+        const splitCachedTags = cachedTagsContent.split(/,\s*/);
+        let tags;
+        let areEqual = true;
+
+        for (let i = 0; i < splitCachedTags.length; i++) {
+          if (splitCachedTags[i] === postAddedState.tags[i]) {
+            continue;
+          } else {
+            areEqual = false;
+            break;
+          }
+        }
+
+        if (!areEqual) {
+          tags = splitCachedTags;
+        } else {
+          tags = postAddedState.tags;
+        }
         // Actual update on the post
+        const post = {
+          id: selectBeingEdit.id,
+          author: postAddedState.author,
+          title: postAddedState.title,
+          content: postAddedState.content,
+          tags: tags,
+          date: moment().format("MMMM Do YYYY, h:mm:ss a"),
+          likes: selectBlog.likes,
+        };
+
+        dispatch(actualEditPost(selectBeingEdit.id, post));
+
         dispatch(
-          actualEditPost(selectBeingEdit.id, {
-            id: selectBeingEdit.id,
-            author: postAddedState.author,
-            title: postAddedState.title,
-            content: postAddedState.content,
-            tags: postAddedState.tags,
-            date: moment().format("MMMM Do YYYY, h:mm:ss a"),
-            likes: selectBlog.likes,
-          })
+          mergeTags(
+            tags.map((el) => {
+              return {
+                tag: el,
+                blog: blog.id,
+              };
+            })
+          )
         );
       }
 
+      setToClearTags(true);
       resetInputVals(
         {
           value: postAddedDispatcher,
@@ -161,7 +248,8 @@ export default function BlogForm({ columns }) {
       dispatch,
       selectBeingEdit.id,
       selectBeingEdit.type,
-      selectBlog.likes,
+      selectBlog,
+      cachedTagsContent,
     ]
   );
 
@@ -237,15 +325,17 @@ export default function BlogForm({ columns }) {
             />
           </div>
           <div className="mb-3">
-            <Input
-              id="blogTags"
-              labelClasses="form-label label-text text-primary"
-              labelContent="Add some tags"
-              inputType="text"
-              inputClasses="form-control"
-              value={postAddedState.tags}
-              onClick={handleInputChange.bind(null, "tags")}
+            <MultiSelectInput
+              onAddTags={() => ({
+                type: "SET_TAGS",
+                cb: postAddedDispatcher,
+              })}
+              toClearTags={toClearTags}
+              onSetCachedTagsContent={setCachedTagsContent}
+              isEdited={selectBeingEdit}
+              tags={postAddedState.tags}
             />
+            <TagsGroup tags={postAddedState.tags} />
           </div>
           <div className="text-end">
             <Button classes="btn btn-primary">

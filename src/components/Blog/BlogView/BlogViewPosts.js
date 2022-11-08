@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -14,7 +14,11 @@ import {
 import BlogViewPostsList from "./BlogViewPostsList";
 import BlogViewPostsListItem from "./BlogViewPostsListItem";
 
-export default function BlogViewPosts({ onToggleShowList, onSetBlogId }) {
+export default function BlogViewPosts({
+  onToggleShowList,
+  onSetBlogId,
+  toShowPostsWithTags,
+}) {
   // Select all blogs
   const selectBlogs = useSelector((state) => state.blog.post_ids);
 
@@ -26,10 +30,17 @@ export default function BlogViewPosts({ onToggleShowList, onSetBlogId }) {
   // Click on the post list item
   const handleBlogPostClick = (id) => {
     if (id === selectBeingEdited.id) return;
-    dispatch(changePostsView());
+    dispatch(changePostsView("single-post"));
     onToggleShowList((prev) => !prev);
     onSetBlogId(id);
   };
+
+  // check toShowPostsWithTags
+  useEffect(() => {
+    if (toShowPostsWithTags) {
+      console.log(123);
+    }
+  }, [toShowPostsWithTags]);
 
   // Increment likes
   const handleIncrementLikes = (id) => {
@@ -60,15 +71,11 @@ export default function BlogViewPosts({ onToggleShowList, onSetBlogId }) {
     [selectBeingEdited]
   );
 
-  // Memoized callbacks
-  const callbacks = useMemo(
-    () => ({
-      click: handleBlogPostClick,
-      increment: handleIncrementLikes,
-      edited: handleEditedPost,
-    }),
-    [handleBlogPostClick, handleIncrementLikes, handleEditedPost]
-  );
+  const callbacks = {
+    click: handleBlogPostClick,
+    increment: handleIncrementLikes,
+    edited: handleEditedPost,
+  };
 
   return (
     <div>

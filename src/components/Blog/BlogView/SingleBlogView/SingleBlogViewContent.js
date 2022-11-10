@@ -1,6 +1,7 @@
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { prepareEditPost } from "../../../../features/blog/blogSlice";
+
 import TagsGroup from "../../../Tags/TagsGroup";
 import SingleBlogViewDatesLikes from "./SingleBlogViewDates_Likes";
 
@@ -20,13 +21,19 @@ export default function SingleBlogViewContent({ blog }) {
   return (
     <div className="alert alert-light" role="alert">
       <h4 className="alert-heading">
-        {blog.title} -
-        <FaEdit
-          className="cursor-pointer"
-          onClick={handleEditing}
-          title="edit"
-          size={12}
-        />
+        <span>
+          {blog.title}
+          <span className="icon-box--light-bg">
+            <span className="inner-span">
+              <FaEdit
+                className="cursor-pointer"
+                onClick={handleEditing}
+                title="edit"
+                size={12}
+              />
+            </span>
+          </span>
+        </span>
       </h4>
       <div className="row">
         <p className="label-text col-8">By {blog.author}</p>

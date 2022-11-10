@@ -28,8 +28,8 @@ const Input = React.forwardRef(
             type={inputType}
             className={inputClasses}
             id={id}
-            placeholder={inputPlaceholder}
             value={value}
+            placeholder={inputPlaceholder}
             onChange={(e) => onSetValue(e.target.value)}
           />
         ) : (
@@ -38,6 +38,7 @@ const Input = React.forwardRef(
             className={inputClasses}
             id={id}
             value={value}
+            placeholder={inputPlaceholder}
             onChange={(e) => onSetValue(e.target.value)}
           ></textarea>
         )}

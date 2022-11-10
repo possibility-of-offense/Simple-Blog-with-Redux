@@ -1,8 +1,8 @@
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import {
-  changePostsView,
   clearStatus,
   selectEditedPost,
+  changePostsView,
 } from "../../../features/blog/blogSlice";
 import CloseIcon from "../../UI/CloseIcon";
 

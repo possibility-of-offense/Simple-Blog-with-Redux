@@ -14,12 +14,13 @@ export default function BlogViewPostsListItem({ classes, blog, callbacks }) {
     >
       <div className="row">
         <p className="col-8 m-0">
-          <span className="text-decoration-underline cursor-pointer">
+          <span className="text-decoration-underline cursor-pointer fs-5">
             {selectPostById.title}
           </span>
           &nbsp;
           <span>
             <BlogViewPostsListItemActions
+              blog={blog}
               incrementing={() =>
                 callbacks.increment(selectPostById.id, selectPostById.author)
               }

@@ -18,13 +18,14 @@ import Input from "../../UI/Input";
 import Panel from "../../UI/Panel";
 import Alert from "../../UI/Alert";
 import postAddedReducer from "../../../reducers/post-added";
-import TagsInputctInput from "../../UI/TagsInputctInput";
+import TagsInput from "../../Tags/TagsInput";
 import TagsGroup from "../../Tags/TagsGroup";
 import { store } from "../../../app/store";
 
 const initialState = {
-  alertContent: "",
+  alertText: "",
   showAlert: false,
+  isFormValid: false,
   author: "",
   title: "",
   content: "",
@@ -63,10 +64,10 @@ export default function BlogForm({ columns }) {
           type: "SET_CONTENT",
           payload: selectBlog.content,
         });
-        postAddedDispatcher({
-          type: "SET_TAGS",
-          payload: selectBlog.tags,
-        });
+        // postAddedDispatcher({
+        //   type: "SET_TAGS",
+        //   payload: selectBlog.tags,
+        // });
       }
     } else if (selectBeingEdit.type === "left-editing") {
       resetInputVals(
@@ -104,6 +105,23 @@ export default function BlogForm({ columns }) {
   const handleAddBlog = useCallback(
     (e) => {
       e.preventDefault();
+
+      if (
+        !postAddedState.author ||
+        !postAddedState.title ||
+        !postAddedState.content
+      ) {
+        postAddedDispatcher({
+          type: "SET_IS_FORM_VALID",
+          payload: { bool: false, text: "The form is not filled completely!" },
+        });
+        return;
+      } else {
+        postAddedDispatcher({
+          type: "SET_IS_FORM_VALID",
+          payload: { bool: true },
+        });
+      }
 
       const blog = {
         id: nanoid(),
@@ -215,9 +233,15 @@ export default function BlogForm({ columns }) {
             })
           )
         );
+
+        postAddedDispatcher({
+          type: "SHOW_ALERT",
+          payload: "You just edited the post",
+        });
       }
 
       setToClearTags(true);
+
       resetInputVals(
         {
           value: postAddedDispatcher,
@@ -242,7 +266,12 @@ export default function BlogForm({ columns }) {
       );
       firstInputRef.current.focus();
 
-      postAddedDispatcher({ type: "SHOW_ALERT", payload: "Post Added" });
+      if (selectBeingEdit.type !== "edited") {
+        postAddedDispatcher({
+          type: "SHOW_ALERT",
+          payload: "You have added a post",
+        });
+      }
     },
     [
       postAddedState.author,
@@ -286,9 +315,7 @@ export default function BlogForm({ columns }) {
   return (
     <div className={columns}>
       {postAddedState.showAlert && (
-        <Alert onHideAlert={handleHideAlert}>
-          {postAddedState.alertContent}
-        </Alert>
+        <Alert onHideAlert={handleHideAlert}>{postAddedState.alertText}</Alert>
       )}
       <Panel>
         <form onSubmit={handleAddBlog}>
@@ -324,12 +351,13 @@ export default function BlogForm({ columns }) {
               labelContent="Content of the blog"
               inputType="textarea"
               inputClasses="form-control"
+              inputPlaceholder="Add Content..."
               value={postAddedState.content}
               onSetValue={handleInputChange.bind(null, "content")}
             />
           </div>
           <div className="mb-3">
-            <TagsInputctInput
+            <TagsInput
               onAddTags={() => ({
                 type: "SET_TAGS",
                 cb: postAddedDispatcher,
@@ -339,7 +367,7 @@ export default function BlogForm({ columns }) {
               isEdited={selectBeingEdit}
               tags={postAddedState.tags}
             />
-            <TagsGroup tags={postAddedState.tags} />
+            <TagsGroup tags={postAddedState.tags} type={selectBeingEdit.type} />
           </div>
           <div className="text-end">
             <Button classes="btn btn-primary">

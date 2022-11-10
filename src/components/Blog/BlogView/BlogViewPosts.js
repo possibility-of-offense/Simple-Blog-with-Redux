@@ -2,14 +2,11 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  changePostsView,
+  prepareEditPost,
   selectEditedPost,
   selectPostsByTag,
-} from "../../../features/blog/blogSlice";
-
-import {
-  prepareEditPost,
   incrementLike,
+  changePostsView,
 } from "../../../features/blog/blogSlice";
 
 import BlogViewPostsList from "./BlogViewPostsList";

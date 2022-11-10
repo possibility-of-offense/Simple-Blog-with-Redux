@@ -3,12 +3,13 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   posts: {},
   postsView: "all-posts",
-  postsTag: undefined,
+  postsTag: null,
   status: {
     type: "idle",
     editedPost: {},
   },
   lastPersonsAddedBlog: {
+    id: "",
     name: "",
     onLiked: false,
     likedBlogs: [],
@@ -68,7 +69,6 @@ const blogSlice = createSlice({
         }
       },
     },
-
     prepareEditPost: {
       prepare(id, post) {
         return {
@@ -133,10 +133,11 @@ export const selectEditedPost = createSelector(
 export const selectPostsByTag = createSelector(
   (state) => state.blog.posts,
   (state, tag) => tag,
-  (posts, tag) =>
-    Object.values(posts)
+  (posts, tag) => {
+    return Object.values(posts)
       .filter((post) => post.tags.includes(tag))
-      .map((p) => p.id)
+      .map((p) => p.id);
+  }
 );
 
 export const {

@@ -3,8 +3,12 @@ import { Fragment } from "react";
 import { useDispatch } from "react-redux";
 import { changePostsView } from "../../features/blog/blogSlice";
 
-export default function TagsGroup({ tags, greenify }) {
-  const mappedTags = tags.map((el) => ({ id: nanoid(), tag: el }));
+export default function TagsGroup({ tags, type, greenify }) {
+  let mappedTags;
+
+  if (type !== "edited") {
+    mappedTags = tags.map((el) => ({ id: nanoid(), tag: el }));
+  }
 
   const dispatch = useDispatch();
   function handleSpanClick(tag) {
@@ -13,7 +17,9 @@ export default function TagsGroup({ tags, greenify }) {
 
   return (
     <div className="mt-2">
-      {mappedTags.length > 0 &&
+      {mappedTags &&
+        Array.isArray(mappedTags) &&
+        mappedTags.length > 0 &&
         mappedTags.map((tag) => (
           <Fragment key={tag.id}>
             <span

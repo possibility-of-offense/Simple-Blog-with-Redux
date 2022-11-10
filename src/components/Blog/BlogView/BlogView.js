@@ -30,15 +30,12 @@ export default function BlogView({ columns }) {
     memoizeSelectById(state, blogId)
   );
 
-  // get store view
-  const selectView = useSelector((state) => state.blog.postsView);
-
   useEffect(() => {
-    if (selectView === "tags") {
+    if (selectPostsView === "tags") {
       setShowList(true);
       setShowTagsList(true);
     }
-  }, [selectView]);
+  }, [selectPostsView]);
 
   return (
     <div className={columns}>

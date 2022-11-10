@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 
-export default function TagsInputctInput({
+export default function TagsInput({
   onAddTags,
   toClearTags,
   onSetCachedTagsContent,

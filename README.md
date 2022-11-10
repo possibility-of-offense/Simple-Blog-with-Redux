@@ -1,3 +1,3 @@
 ## Blog app using React, Redux and Boostrap
 
-[Link](https://possibility-of-offense.github.io/Simple-Blog-with-Redux/)
+[Blog With Redux](https://possibility-of-offense.github.io/Simple-Blog-with-Redux/){:target="_blank"}

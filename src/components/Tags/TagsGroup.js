@@ -7,8 +7,8 @@ export default function TagsGroup({ tags, greenify }) {
   const mappedTags = tags.map((el) => ({ id: nanoid(), tag: el }));
 
   const dispatch = useDispatch();
-  function handleSpanClick() {
-    dispatch(changePostsView("tags"));
+  function handleSpanClick(tag) {
+    dispatch(changePostsView("tags", tag));
   }
 
   return (
@@ -17,7 +17,7 @@ export default function TagsGroup({ tags, greenify }) {
         mappedTags.map((tag) => (
           <Fragment key={tag.id}>
             <span
-              onClick={handleSpanClick}
+              onClick={() => handleSpanClick(tag.tag)}
               className={`cursor-pointer badge text-bg-${
                 greenify ? "success" : "light"
               } md-shadow-1`}

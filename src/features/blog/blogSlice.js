@@ -3,6 +3,7 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   posts: {},
   postsView: "all-posts",
+  postsTag: undefined,
   status: {
     type: "idle",
     editedPost: {},
@@ -31,17 +32,20 @@ const blogSlice = createSlice({
       };
     },
     changePostsView: {
-      prepare(view) {
-        return { payload: view };
+      prepare(view, tag = null) {
+        return { payload: { view, tag } };
       },
       reducer(state, action) {
-        state.postsView = action.payload;
+        state.postsView = action.payload.view;
+        const { tag } = action.payload;
+
+        if (!tag) {
+          state.postsTag = undefined;
+        } else {
+          state.postsTag = action.payload.tag;
+        }
       },
     },
-    // changePostsView() {
-    //   state.postsView =
-    //   state.postsView === "all-posts" ? "single-post" : "all-posts";
-    // },
     incrementLike: {
       prepare(id) {
         return { payload: { id } };
@@ -125,6 +129,14 @@ export const selectEditedPost = createSelector(
     type: post.type,
     id: post.editedPost.id,
   })
+);
+export const selectPostsByTag = createSelector(
+  (state) => state.blog.posts,
+  (state, tag) => tag,
+  (posts, tag) =>
+    Object.values(posts)
+      .filter((post) => post.tags.includes(tag))
+      .map((p) => p.id)
 );
 
 export const {

@@ -1,9 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
   changePostsView,
   selectEditedPost,
+  selectPostsByTag,
 } from "../../../features/blog/blogSlice";
 
 import {
@@ -35,12 +36,13 @@ export default function BlogViewPosts({
     onSetBlogId(id);
   };
 
-  // check toShowPostsWithTags
-  useEffect(() => {
-    if (toShowPostsWithTags) {
-      console.log(123);
-    }
-  }, [toShowPostsWithTags]);
+  // Select the picked tag
+  const selectPostsTag = useSelector((state) => state.blog.postsTag);
+
+  // Select blogs with tags
+  const selectBlogsWithTags = useSelector((state) =>
+    selectPostsByTag(state, selectPostsTag)
+  );
 
   // Increment likes
   const handleIncrementLikes = (id) => {
@@ -79,10 +81,10 @@ export default function BlogViewPosts({
 
   return (
     <div>
-      {selectBlogs.length > 0 && (
+      {selectBlogsWithTags.length > 0 ? (
         <div className="list-group">
           <BlogViewPostsList>
-            {selectBlogs.map((blog, i) => (
+            {selectBlogsWithTags.map((blog, i) => (
               <BlogViewPostsListItem
                 key={blog}
                 classes={`${appendClass(
@@ -96,6 +98,25 @@ export default function BlogViewPosts({
             ))}
           </BlogViewPostsList>
         </div>
+      ) : (
+        selectBlogs.length > 0 && (
+          <div className="list-group">
+            <BlogViewPostsList>
+              {selectBlogs.map((blog, i) => (
+                <BlogViewPostsListItem
+                  key={blog}
+                  classes={`${appendClass(
+                    blog
+                  )} list-group-item list-group-item-action${
+                    i === 0 ? " bg-light" : ""
+                  }`}
+                  blog={blog}
+                  callbacks={callbacks}
+                />
+              ))}
+            </BlogViewPostsList>
+          </div>
+        )
       )}
     </div>
   );

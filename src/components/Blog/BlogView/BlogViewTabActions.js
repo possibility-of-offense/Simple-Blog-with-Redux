@@ -4,6 +4,7 @@ import {
   clearStatus,
   selectEditedPost,
 } from "../../../features/blog/blogSlice";
+import CloseIcon from "../../UI/CloseIcon";
 
 export default function BlogContentActions() {
   const selectPostsView = useSelector(
@@ -11,9 +12,14 @@ export default function BlogContentActions() {
     shallowEqual
   );
 
+  // Check if postsTag from the state slice was updated
+  const selectPostsTag = useSelector((state) => state.blog.postsTag);
+
   const dispatch = useDispatch();
   const handleTabClick = () => {
-    dispatch(changePostsView("all-posts"));
+    if (!selectPostsTag) {
+      dispatch(changePostsView("all-posts"));
+    }
   };
 
   const selectBeingEdited = useSelector(selectEditedPost);
@@ -38,7 +44,12 @@ export default function BlogContentActions() {
         >
           Posts{" "}
           {selectPostsView === "tags" && (
-            <span onClick={handleRemoveTaggedFilter}>&times;</span>
+            <span>
+              with tag:{" "}
+              <CloseIcon onClick={handleRemoveTaggedFilter}>
+                {selectPostsTag}
+              </CloseIcon>
+            </span>
           )}
         </span>
       </li>

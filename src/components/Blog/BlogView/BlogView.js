@@ -16,7 +16,7 @@ export default function BlogView({ columns }) {
   const [showTagsList, setShowTagsList] = useState(false);
 
   useEffect(() => {
-    if (selectPostsView === "all-posts") {
+    if (selectPostsView === "all-posts" || selectPostsView === "tags") {
       if (!showList) {
         setShowList(true);
       }
@@ -52,7 +52,6 @@ export default function BlogView({ columns }) {
           />
         )}
 
-        {/* TODO add some filtering options when showTagsList is clicked and pass this new data to the BlogViewPosts */}
         {showList && showTagsList && (
           <BlogViewPosts
             onToggleShowList={setShowList}

@@ -18,7 +18,7 @@ import Input from "../../UI/Input";
 import Panel from "../../UI/Panel";
 import Alert from "../../UI/Alert";
 import postAddedReducer from "../../../reducers/post-added";
-import MultiSelectInput from "../../UI/MultiSelectInput";
+import TagsInputctInput from "../../UI/TagsInputctInput";
 import TagsGroup from "../../Tags/TagsGroup";
 import { store } from "../../../app/store";
 
@@ -142,7 +142,11 @@ export default function BlogForm({ columns }) {
         // LOGIC for merging the blog ids for the tag
         if (Object.keys(entities).length > 0) {
           mergedEntities = { ...entities };
+
           for (let tag of tags) {
+            if (mergedEntities.hasOwnProperty(tag)) {
+              continue;
+            }
             if (mergedEntities.hasOwnProperty(tag)) {
               mergedEntities[tag] = {
                 ...mergedEntities[tag],
@@ -166,7 +170,7 @@ export default function BlogForm({ columns }) {
 
         dispatch(addTags(mergedEntities));
 
-        blog.tags = tags;
+        blog.tags = [...new Set(tags)];
 
         dispatch(addBlog(blog));
       } else {
@@ -325,7 +329,7 @@ export default function BlogForm({ columns }) {
             />
           </div>
           <div className="mb-3">
-            <MultiSelectInput
+            <TagsInputctInput
               onAddTags={() => ({
                 type: "SET_TAGS",
                 cb: postAddedDispatcher,

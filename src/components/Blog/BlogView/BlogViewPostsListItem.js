@@ -7,13 +7,14 @@ export default function BlogViewPostsListItem({ classes, blog, callbacks }) {
   const selectPostById = useSelector((state) => memoizeSelectById(state, blog));
 
   return (
-    <div className={classes} aria-current="true">
+    <div
+      className={`${classes} cursor-pointer`}
+      aria-current="true"
+      onClick={() => callbacks.click(selectPostById.id)}
+    >
       <div className="row">
         <p className="col-8 m-0">
-          <span
-            className="text-decoration-underline cursor-pointer"
-            onClick={() => callbacks.click(selectPostById.id)}
-          >
+          <span className="text-decoration-underline cursor-pointer">
             {selectPostById.title}
           </span>
           &nbsp;

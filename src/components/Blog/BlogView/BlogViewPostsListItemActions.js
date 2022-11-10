@@ -10,15 +10,21 @@ export default function BlogViewPostsListItemActions({
 }) {
   const [addHeartIconClass, setAddHeartIconClass] = useState(false);
 
-  const handleHeartIconClick = () => {
+  const handleHeartIconClick = (e) => {
+    e.stopPropagation();
     incrementing();
     setAddHeartIconClass((prev) => !prev);
+  };
+
+  const handleEditIconClick = (e) => {
+    e.stopPropagation();
+    editing();
   };
 
   return (
     <Fragment>
       <a href="#!" className="link-muted mx-1">
-        <FaEdit onClick={editing} title="edit" size={12} />
+        <FaEdit onClick={handleEditIconClick} title="edit" size={12} />
       </a>
       <a href="#!" className={`link-muted mx-1 relative`}>
         {addHeartIconClass && <IncrementerTooltip>+1</IncrementerTooltip>}
